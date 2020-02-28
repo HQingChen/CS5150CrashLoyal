@@ -8,6 +8,7 @@
 #include "Waypoint.h"
 #include "GameState.h"
 #include "Point.h"
+#include <cmath>  
 
 int Mob::previousUUID;
 
@@ -152,14 +153,21 @@ bool Mob::targetInRange() {
 // PROJECT 3: 
 //  1) return a vector of mobs that we're colliding with
 //  2) handle collision with towers & river 
-std::shared_ptr<Mob> Mob::checkCollision() {
+std::vector<std::shared_ptr<Mob>> Mob::checkCollision() {
+	std::vector<std::shared_ptr<Mob>> collisionMobs;
 	for (std::shared_ptr<Mob> otherMob : GameState::mobs) {
 		// don't collide with yourself
 		if (this->sameMob(otherMob)) { continue; }
 
 		// PROJECT 3: YOUR CODE CHECKING FOR A COLLISION GOES HERE
+		int x = this->getPosition()->x;
+		int y = this->getPosition()->y;
+		if (std::abs(x - otherMob->getPosition()->x) <= std::abs(this->GetSize() + otherMob->GetSize()) / 2 
+			&& std::abs(y - otherMob->getPosition()->y) <= std::abs(this->GetSize() + otherMob->GetSize()) / 2) {
+			collisionMobs.push_back(otherMob);
+		}
 	}
-	return std::shared_ptr<Mob>(nullptr);
+	return collisionMobs;
 }
 
 void Mob::processCollision(std::shared_ptr<Mob> otherMob, double elapsedTime) {
@@ -206,9 +214,11 @@ void Mob::moveProcedure(double elapsedTime) {
 
 		// PROJECT 3: You should not change this code very much, but this is where your 
 		// collision code will be called from
-		std::shared_ptr<Mob> otherMob = this->checkCollision();
-		if (otherMob) {
-			this->processCollision(otherMob, elapsedTime);
+		std::vector<std::shared_ptr<Mob>> otherMobs = this->checkCollision();
+		for (std::shared_ptr<Mob> otherMob : otherMobs) {
+			if (otherMob) {
+				this->processCollision(otherMob, elapsedTime);
+			}
 		}
 
 		// Fighting otherMob takes priority always
