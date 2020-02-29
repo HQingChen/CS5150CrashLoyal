@@ -112,6 +112,7 @@ bool Mob::findAndSetAttackableMob() {
 	// Find an attackable target that's in the same quardrant as this Mob
 	// If a target is found, this function returns true
 	// If a target is found then this Mob is updated to start attacking it
+	bool findAttackable = false;
 	for (std::shared_ptr<Mob> otherMob : GameState::mobs) {
 		if (otherMob->attackingNorth == this->attackingNorth) { continue; }
 
@@ -124,10 +125,10 @@ bool Mob::findAndSetAttackableMob() {
 			// If we're in the same quardrant as the otherMob
 			// Mark it as the new target
 			this->setAttackTarget(otherMob);
-			return true;
+			findAttackable = true;
 		}
 	}
-	return false;
+	return findAttackable;
 }
 
 // TODO Move this somewhere better like a utility class
@@ -138,12 +139,12 @@ int randomNumber(int minValue, int maxValue) {
 
 void Mob::setAttackTarget(std::shared_ptr<Attackable> newTarget) {
 	this->state = MobState::Attacking;
-	if (target == nullptr) {
+	if (target == NULL) {
 		target = newTarget;
 		return;
 	}
-	int curDistance = std::abs(target->getPosition()->x - this->getPosition()->x) + std::abs(target->getPosition()->x - this->getPosition()->x);
-	if (curDistance > std::abs(newTarget->getPosition()->x - this->getPosition()->x) + std::abs(newTarget->getPosition()->x - this->getPosition()->x)) {
+	int curDistance = std::abs(target->getPosition()->x - this->getPosition()->x) + std::abs(target->getPosition()->y - this->getPosition()->y);
+	if (curDistance > std::abs(newTarget->getPosition()->x - this->getPosition()->x) + std::abs(newTarget->getPosition()->y - this->getPosition()->y)) {
 		target = newTarget;
 	}
 }
@@ -214,6 +215,13 @@ void Mob::attackProcedure(double elapsedTime) {
 	else {
 		// If the target is not in range
 		moveTowards(target->getPosition(), elapsedTime);
+		std::vector<std::shared_ptr<Mob>> otherMobs = this->checkCollision();
+		for (std::shared_ptr<Mob> otherMob : otherMobs) {
+			if (otherMob) {
+				this->processCollision(otherMob, elapsedTime);
+			}
+		}
+
 	}
 }
 
