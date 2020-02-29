@@ -162,8 +162,8 @@ std::vector<std::shared_ptr<Mob>> Mob::checkCollision() {
 		// PROJECT 3: YOUR CODE CHECKING FOR A COLLISION GOES HERE
 		int x = this->getPosition()->x;
 		int y = this->getPosition()->y;
-		if (std::abs(x - otherMob->getPosition()->x) <= std::abs(this->GetSize() + otherMob->GetSize()) / 2 
-			&& std::abs(y - otherMob->getPosition()->y) <= std::abs(this->GetSize() + otherMob->GetSize()) / 2) {
+		if (std::abs(x - otherMob->getPosition()->x) <= std::abs(this->GetSize() + otherMob->GetSize()) 
+			&& std::abs(y - otherMob->getPosition()->y) <= std::abs(this->GetSize() + otherMob->GetSize())) {
 			collisionMobs.push_back(otherMob);
 		}
 	}
@@ -172,6 +172,13 @@ std::vector<std::shared_ptr<Mob>> Mob::checkCollision() {
 
 void Mob::processCollision(std::shared_ptr<Mob> otherMob, double elapsedTime) {
 	// PROJECT 3: YOUR COLLISION HANDLING CODE GOES HERE
+	Point steerPoint;
+	steerPoint.x = this->pos.x - otherMob->getPosition()->x;
+	steerPoint.y = this->pos.y - otherMob->getPosition()->y;
+	steerPoint.normalize();
+	steerPoint *= (float)this->GetSpeed();
+	steerPoint *= (float)elapsedTime;
+	pos += steerPoint;
 }
 
 // Collisions
@@ -220,6 +227,7 @@ void Mob::moveProcedure(double elapsedTime) {
 				this->processCollision(otherMob, elapsedTime);
 			}
 		}
+		otherMobs.clear();
 
 		// Fighting otherMob takes priority always
 		findAndSetAttackableMob();
