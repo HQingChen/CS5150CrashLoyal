@@ -138,7 +138,14 @@ int randomNumber(int minValue, int maxValue) {
 
 void Mob::setAttackTarget(std::shared_ptr<Attackable> newTarget) {
 	this->state = MobState::Attacking;
-	target = newTarget;
+	if (target == nullptr) {
+		target = newTarget;
+		return;
+	}
+	int curDistance = std::abs(target->getPosition()->x - this->getPosition()->x) + std::abs(target->getPosition()->x - this->getPosition()->x);
+	if (curDistance > std::abs(newTarget->getPosition()->x - this->getPosition()->x) + std::abs(newTarget->getPosition()->x - this->getPosition()->x)) {
+		target = newTarget;
+	}
 }
 
 bool Mob::targetInRange() {
@@ -172,13 +179,16 @@ std::vector<std::shared_ptr<Mob>> Mob::checkCollision() {
 
 void Mob::processCollision(std::shared_ptr<Mob> otherMob, double elapsedTime) {
 	// PROJECT 3: YOUR COLLISION HANDLING CODE GOES HERE
-	Point steerPoint;
-	steerPoint.x = this->pos.x - otherMob->getPosition()->x;
-	steerPoint.y = this->pos.y - otherMob->getPosition()->y;
-	steerPoint.normalize();
-	steerPoint *= (float)this->GetSpeed();
-	steerPoint *= (float)elapsedTime;
-	pos += steerPoint;
+	if (this->GetMass() <= otherMob->GetMass()) {
+		Point spacing;
+		spacing.x = this->pos.x - otherMob->getPosition()->x;
+		spacing.y = this->pos.y - otherMob->getPosition()->y;
+		spacing.normalize();
+		spacing *= (float)this->GetSpeed();
+		spacing *= (float)elapsedTime;
+		pos += spacing;
+	}
+	
 }
 
 // Collisions
@@ -227,10 +237,11 @@ void Mob::moveProcedure(double elapsedTime) {
 				this->processCollision(otherMob, elapsedTime);
 			}
 		}
-		otherMobs.clear();
 
 		// Fighting otherMob takes priority always
 		findAndSetAttackableMob();
+		findNewTarget();
+
 
 	} else {
 		// if targetPosition is nullptr

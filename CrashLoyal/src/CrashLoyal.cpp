@@ -270,12 +270,12 @@ int main(int argc, char* args[]) {
 
 			// Draw waypoints
 			// TODO remove this
-			//for (std::shared_ptr<Waypoint> wp : GameState::waypoints)
-			//{
-			//	drawSquare(wp->pos.x * PIXELS_PER_METER, 
-			//			   wp->pos.y * PIXELS_PER_METER, 
-			//			   WAYPOINT_SIZE * PIXELS_PER_METER);
-			//}
+			for (std::shared_ptr<Waypoint> wp : GameState::waypoints)
+			{
+				drawSquare(wp->pos.x * PIXELS_PER_METER, 
+						   wp->pos.y * PIXELS_PER_METER, 
+						   WAYPOINT_SIZE * PIXELS_PER_METER);
+			}
 
 			now = std::chrono::high_resolution_clock::now();;
 			double deltaTSec = (std::chrono::duration_cast<std::chrono::duration<double>>(now - previousTime)).count() * 10;
