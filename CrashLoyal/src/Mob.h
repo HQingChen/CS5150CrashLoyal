@@ -97,6 +97,10 @@ protected:
 
 	void processCollision(std::shared_ptr<Mob> otherMob, double elapsedTime);
 
+	std::shared_ptr<Building> checkBuildingCollision();
+
+	void processBuildingCollision(std::shared_ptr<Building> building, double elapsedTime);
+
 	// Collisions
 	///////////////////////////////////////////////
 	// Procedures

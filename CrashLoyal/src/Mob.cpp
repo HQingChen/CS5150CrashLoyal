@@ -170,8 +170,8 @@ std::vector<std::shared_ptr<Mob>> Mob::checkCollision() {
 		// PROJECT 3: YOUR CODE CHECKING FOR A COLLISION GOES HERE
 		int x = this->getPosition()->x;
 		int y = this->getPosition()->y;
-		if (std::abs(x - otherMob->getPosition()->x) <= std::abs(this->GetSize() + otherMob->GetSize()) 
-			&& std::abs(y - otherMob->getPosition()->y) <= std::abs(this->GetSize() + otherMob->GetSize())) {
+		if (std::abs(x - otherMob->getPosition()->x) <= this->GetSize() + otherMob->GetSize() 
+			&& std::abs(y - otherMob->getPosition()->y) <= this->GetSize() + otherMob->GetSize()) {
 			collisionMobs.push_back(otherMob);
 		}
 	}
@@ -185,11 +185,89 @@ void Mob::processCollision(std::shared_ptr<Mob> otherMob, double elapsedTime) {
 		spacing.x = this->pos.x - otherMob->getPosition()->x;
 		spacing.y = this->pos.y - otherMob->getPosition()->y;
 		spacing.normalize();
+		if (std::abs(spacing.x) <= std::abs(spacing.y)) {
+			if (spacing.x <= 0.0f && spacing.y >= 0.0f) {
+				spacing.x -= 0.5f;
+				spacing.y -= 0.5f;
+			}
+			else if (spacing.x > 0.0f && spacing.y >= 0.0f) {
+				spacing.x += 0.5f;
+					spacing.y -= 0.5f;
+			}
+			else if (spacing.x <= 0.0f && spacing.y <= 0.0f) {
+				spacing.x -= 0.5f;
+				spacing.y += 0.5f;
+			}
+			else if (spacing.x > 0.0f && spacing.y <= 0.0f) {
+				spacing.x += 0.5f;
+				spacing.y += 0.5f;
+			}
+		}
+		else {
+			if (spacing.x <= 0.0f && spacing.y >= 0.0f) {
+				spacing.x += 0.5f;
+				spacing.y += 0.5f;
+			}
+			else if (spacing.x > 0.0f && spacing.y >= 0.0f) {
+				spacing.x -= 0.5f;
+				spacing.y += 0.5f;
+			}
+			else if (spacing.x <= 0.0f && spacing.y <= 0.0f) {
+				spacing.x += 0.5f;
+				spacing.y -= 0.5f;
+			}
+			else if (spacing.x > 0.0f && spacing.y <= 0.0f) {
+				spacing.x -= 0.5f;
+				spacing.y -= 0.5f;
+			}
+		}
+			
 		spacing *= (float)this->GetSpeed();
 		spacing *= (float)elapsedTime;
+
 		pos += spacing;
 	}
 	
+}
+
+std::shared_ptr<Building> Mob::checkBuildingCollision() {
+	for (std::shared_ptr<Building> b : GameState::buildings) {
+		int x = this->getPosition()->x;
+		int y = this->getPosition()->y;
+		if (std::abs(x - b->getPosition()->x) <= (this->GetSize() + b->GetSize()) / 2
+			&& std::abs(y - b->getPosition()->y) <= (this->GetSize() + b->GetSize()) / 2) {
+			return b;
+		}
+	}
+	return std::shared_ptr<Building>(nullptr);
+}
+
+
+void Mob::processBuildingCollision(std::shared_ptr<Building> building, double elapsedTime) {
+	Point spacing;
+	spacing.x = this->pos.x - building->getPosition()->x;
+	spacing.y = this->pos.y - building->getPosition()->y;
+	spacing.normalize();
+	if (spacing.x <= 0.0f && spacing.y >= 0.0f) {
+		spacing.x -= 0.2f;
+		spacing.y -= 0.2f;
+	}
+	else if (spacing.x > 0.0f && spacing.y >= 0.0f) {
+		spacing.x += 0.2f;
+		spacing.y -= 0.2f;
+	}
+	else if (spacing.x <= 0.0f && spacing.y <= 0.0f) {
+		spacing.x -= 0.2f;
+		spacing.y += 0.2f;
+	}
+	else if (spacing.x > 0.0f && spacing.y <= 0.0f) {
+		spacing.x += 0.2f;
+		spacing.y += 0.2f;
+	}
+	spacing *= (float)this->GetSpeed();
+	spacing *= (float)elapsedTime;
+
+	pos += spacing;
 }
 
 // Collisions
@@ -217,9 +295,7 @@ void Mob::attackProcedure(double elapsedTime) {
 		moveTowards(target->getPosition(), elapsedTime);
 		std::vector<std::shared_ptr<Mob>> otherMobs = this->checkCollision();
 		for (std::shared_ptr<Mob> otherMob : otherMobs) {
-			if (otherMob) {
-				this->processCollision(otherMob, elapsedTime);
-			}
+			this->processCollision(otherMob, elapsedTime);
 		}
 
 	}
@@ -244,6 +320,11 @@ void Mob::moveProcedure(double elapsedTime) {
 			if (otherMob) {
 				this->processCollision(otherMob, elapsedTime);
 			}
+		}
+
+		std::shared_ptr<Building> building = this->checkBuildingCollision();
+		if (building) {
+			this->processBuildingCollision(building, elapsedTime);
 		}
 
 		// Fighting otherMob takes priority always
