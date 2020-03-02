@@ -178,6 +178,7 @@ std::vector<std::shared_ptr<Mob>> Mob::checkCollision() {
 	return collisionMobs;
 }
 
+// process collision for mobs
 void Mob::processCollision(std::shared_ptr<Mob> otherMob, double elapsedTime) {
 	// PROJECT 3: YOUR COLLISION HANDLING CODE GOES HERE
 	if (this->GetMass() <= otherMob->GetMass()) {
@@ -230,6 +231,7 @@ void Mob::processCollision(std::shared_ptr<Mob> otherMob, double elapsedTime) {
 	
 }
 
+// handle collision between mobs and building.
 std::shared_ptr<Building> Mob::checkBuildingCollision() {
 	for (std::shared_ptr<Building> b : GameState::buildings) {
 		int x = this->getPosition()->x;
@@ -242,7 +244,7 @@ std::shared_ptr<Building> Mob::checkBuildingCollision() {
 	return std::shared_ptr<Building>(nullptr);
 }
 
-
+// process collision between mobs and building.
 void Mob::processBuildingCollision(std::shared_ptr<Building> building, double elapsedTime) {
 	Point spacing;
 	spacing.x = this->pos.x - building->getPosition()->x;
@@ -270,6 +272,7 @@ void Mob::processBuildingCollision(std::shared_ptr<Building> building, double el
 	pos += spacing;
 }
 
+// handle collision between mobs and river.
 std::shared_ptr<Point> Mob::checkRiverCollision() {
 	int x = this->getPosition()->x;
 	int y = this->getPosition()->y;
@@ -307,6 +310,7 @@ std::shared_ptr<Point> Mob::checkRiverCollision() {
 	return std::shared_ptr<Point>(nullptr);
 }
 
+// process collision between mobs and river.
 void Mob::processRiverCollision(std::shared_ptr<Point> river, double elapsedTime) {
 	Point spacing;
 	spacing.x = this->pos.x - targetPosition->x;
