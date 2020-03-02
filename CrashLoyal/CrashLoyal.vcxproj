@@ -25,6 +25,7 @@
     <ClCompile Include="src\Mob.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Mob_River.h" />
     <ClInclude Include="src\Attackable.h" />
     <ClInclude Include="src\Building.h" />
     <ClInclude Include="src\GameState.h" />

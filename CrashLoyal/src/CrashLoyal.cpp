@@ -189,14 +189,32 @@ void drawBG() {
 	SDL_RenderFillRect(gRenderer, &bgRect);
 	int upshift = 5;
 	// Draw the river
-	SDL_Rect riverRect = {
+	SDL_Rect riverRectLeft = {
 		(int)(RIVER_LEFT_X * PIXELS_PER_METER),
 		(int)(RIVER_TOP_Y * PIXELS_PER_METER),
-		(int)(SCREEN_WIDTH * PIXELS_PER_METER),
+		(int)((LEFT_BRIDGE_CENTER_X - BRIDGE_WIDTH / 2.0) * PIXELS_PER_METER),
 		(int)((RIVER_BOT_Y - RIVER_TOP_Y) * PIXELS_PER_METER)
 	};
 	SDL_SetRenderDrawColor(gRenderer, 51, 119, 255, 0xFF); // Light blue
-	SDL_RenderFillRect(gRenderer, &riverRect);
+	SDL_RenderFillRect(gRenderer, &riverRectLeft);
+
+	SDL_Rect riverRectMiddle = {
+	(int)((LEFT_BRIDGE_CENTER_X + BRIDGE_WIDTH / 2.0 - 0.5) * PIXELS_PER_METER),
+	(int)(RIVER_TOP_Y * PIXELS_PER_METER),
+	(int)((RIGHT_BRIDGE_CENTER_X - LEFT_BRIDGE_CENTER_X - BRIDGE_WIDTH) * PIXELS_PER_METER),
+	(int)((RIVER_BOT_Y - RIVER_TOP_Y) * PIXELS_PER_METER)
+	};
+	SDL_SetRenderDrawColor(gRenderer, 51, 119, 255, 0xFF); // Light blue
+	SDL_RenderFillRect(gRenderer, &riverRectMiddle);
+
+	SDL_Rect riverRectRight = {
+	(int)((RIGHT_BRIDGE_CENTER_X + BRIDGE_WIDTH / 2.0 - 0.5) * PIXELS_PER_METER),
+	(int)(RIVER_TOP_Y * PIXELS_PER_METER),
+	(int)((SCREEN_WIDTH - RIGHT_BRIDGE_CENTER_X - BRIDGE_WIDTH / 2.0) * PIXELS_PER_METER),
+	(int)((RIVER_BOT_Y - RIVER_TOP_Y) * PIXELS_PER_METER)
+	};
+	SDL_SetRenderDrawColor(gRenderer, 51, 119, 255, 0xFF); // Light blue
+	SDL_RenderFillRect(gRenderer, &riverRectRight);
 
 	// Draw bridges
 	SDL_Rect bridgeLeft = {
@@ -270,12 +288,12 @@ int main(int argc, char* args[]) {
 
 			// Draw waypoints
 			// TODO remove this
-			for (std::shared_ptr<Waypoint> wp : GameState::waypoints)
-			{
-				drawSquare(wp->pos.x * PIXELS_PER_METER, 
-						   wp->pos.y * PIXELS_PER_METER, 
-						   WAYPOINT_SIZE * PIXELS_PER_METER);
-			}
+			//for (std::shared_ptr<Waypoint> wp : GameState::waypoints)
+			//{
+			//	drawSquare(wp->pos.x * PIXELS_PER_METER, 
+			//			   wp->pos.y * PIXELS_PER_METER, 
+			//			   WAYPOINT_SIZE * PIXELS_PER_METER);
+			//}
 
 			now = std::chrono::high_resolution_clock::now();;
 			double deltaTSec = (std::chrono::duration_cast<std::chrono::duration<double>>(now - previousTime)).count() * 10;

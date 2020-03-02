@@ -25,6 +25,9 @@
     <ClInclude Include="src\Attackable.h">
       <Filter>Mobs</Filter>
     </ClInclude>
+    <ClInclude Include="Mob_River.h">
+      <Filter>Mobs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Mobs">

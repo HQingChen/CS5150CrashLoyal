@@ -101,6 +101,10 @@ protected:
 
 	void processBuildingCollision(std::shared_ptr<Building> building, double elapsedTime);
 
+	std::shared_ptr<Point> checkRiverCollision();
+
+	void processRiverCollision(std::shared_ptr<Point> river, double elapsedTime);
+
 	// Collisions
 	///////////////////////////////////////////////
 	// Procedures

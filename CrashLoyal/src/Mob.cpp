@@ -270,6 +270,70 @@ void Mob::processBuildingCollision(std::shared_ptr<Building> building, double el
 	pos += spacing;
 }
 
+std::shared_ptr<Point> Mob::checkRiverCollision() {
+	int x = this->getPosition()->x;
+	int y = this->getPosition()->y;
+
+	// check left river 
+	int leftRiverX = (int) RIVER_LEFT_X;
+	int leftRiverY = (int) RIVER_TOP_Y;
+	int leftRiverW = (int)(LEFT_BRIDGE_CENTER_X - BRIDGE_WIDTH / 2.0);
+	int leftRiverH = (int)(RIVER_BOT_Y - RIVER_TOP_Y);
+	if (x >= leftRiverX && x <= leftRiverX + leftRiverW && y >= leftRiverY && y <= leftRiverY + leftRiverH) {
+		Point leftRiverPos(leftRiverX, leftRiverY);
+		return std::make_shared<Point>(leftRiverPos);
+	}
+
+	// check middle river 
+	int midRiverX = (int)(LEFT_BRIDGE_CENTER_X + BRIDGE_WIDTH / 2.0 - 0.5);
+	int midRiverY = (int)RIVER_TOP_Y;
+	int midRiverW = (int)(RIGHT_BRIDGE_CENTER_X - LEFT_BRIDGE_CENTER_X - BRIDGE_WIDTH);
+	int midRiverH = (int)(RIVER_BOT_Y - RIVER_TOP_Y);
+	if (x >= midRiverX && x <= midRiverX + midRiverW && y >= midRiverY && y <= midRiverY + midRiverH) {
+		Point midRiverPos(midRiverX, midRiverY);
+		return std::make_shared<Point>(midRiverPos);
+	}
+
+	// check right river 
+	int rightRiverX = (int)(RIGHT_BRIDGE_CENTER_X + BRIDGE_WIDTH / 2.0 - 0.5);
+	int rightRiverY = (int)RIVER_TOP_Y;
+	int rightRiverW = (int)(SCREEN_WIDTH - RIGHT_BRIDGE_CENTER_X - BRIDGE_WIDTH / 2.0);
+	int rightRiverH = (int)(RIVER_BOT_Y - RIVER_TOP_Y);
+	if (x >= rightRiverX && x <= rightRiverX + rightRiverW && y >= rightRiverY && y <= rightRiverY + rightRiverH) {
+		Point rightRiverPos(rightRiverX, rightRiverY);
+		return std::make_shared<Point>(rightRiverPos);
+	}
+
+	return std::shared_ptr<Point>(nullptr);
+}
+
+void Mob::processRiverCollision(std::shared_ptr<Point> river, double elapsedTime) {
+	Point spacing;
+	spacing.x = this->pos.x - targetPosition->x;
+	spacing.y = this->pos.y - targetPosition->y;
+	spacing.normalize();
+	if (river->x == RIVER_LEFT_X) {
+		spacing.x += 0.5f;
+	}
+	else if (river->x == (int)(LEFT_BRIDGE_CENTER_X + BRIDGE_WIDTH / 2.0 - 0.5)) {
+		int mid = river->x + (int)(RIGHT_BRIDGE_CENTER_X - LEFT_BRIDGE_CENTER_X - BRIDGE_WIDTH) / 2;
+		if (this->pos.x <= mid) {
+			spacing.x -= 0.5f;
+		}
+		else {
+			spacing.x += 0.5f;
+		}
+	}
+	else {
+		spacing.x -= 0.5f;
+	}
+	spacing *= (float)this->GetSpeed();
+	spacing *= (float)elapsedTime;
+
+	pos += spacing;
+}
+
+
 // Collisions
 ///////////////////////////////////////////////
 // Procedures
@@ -297,7 +361,15 @@ void Mob::attackProcedure(double elapsedTime) {
 		for (std::shared_ptr<Mob> otherMob : otherMobs) {
 			this->processCollision(otherMob, elapsedTime);
 		}
-
+		std::shared_ptr<Building> building = this->checkBuildingCollision();
+		if (building) {
+			this->processBuildingCollision(building, elapsedTime);
+		}
+		std::shared_ptr<Point> river = this->checkRiverCollision();
+		if (river) {
+			findClosestWaypoint();
+			this->processRiverCollision(river, elapsedTime);
+		}
 	}
 }
 
@@ -325,6 +397,11 @@ void Mob::moveProcedure(double elapsedTime) {
 		std::shared_ptr<Building> building = this->checkBuildingCollision();
 		if (building) {
 			this->processBuildingCollision(building, elapsedTime);
+		}
+
+		std::shared_ptr<Point> river = this->checkRiverCollision();
+		if (river) {
+			this->processRiverCollision(river, elapsedTime);
 		}
 
 		// Fighting otherMob takes priority always

@@ -5,7 +5,7 @@
 class Mob_Archer : public Mob
 {
 public:
-	virtual int GetMaxHealth() const { return 40; }
+	virtual int GetMaxHealth() const { return 4; }
 	virtual float GetSpeed() const { return 1.0f; }
 	virtual float GetSize() const { return 0.5f; }
 	virtual float GetMass() const { return 3.f; }

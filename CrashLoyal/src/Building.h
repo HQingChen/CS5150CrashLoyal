@@ -9,7 +9,7 @@ const float KingTowerSize = 5.0f;
 const int KingTowerHealth = 100;
 
 const float SmallTowerSize = 3.f;
-const int SmallTowerHealth = 50.0f;
+const int SmallTowerHealth = 50;
 
 const float KingTowerAttackRadius = 20.f;
 const float SmallTowerAttackRadius = 20.f;
