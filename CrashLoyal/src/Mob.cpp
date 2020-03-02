@@ -170,8 +170,8 @@ std::vector<std::shared_ptr<Mob>> Mob::checkCollision() {
 		// PROJECT 3: YOUR CODE CHECKING FOR A COLLISION GOES HERE
 		int x = this->getPosition()->x;
 		int y = this->getPosition()->y;
-		if (std::abs(x - otherMob->getPosition()->x) <= this->GetSize() + otherMob->GetSize() 
-			&& std::abs(y - otherMob->getPosition()->y) <= this->GetSize() + otherMob->GetSize()) {
+		if (std::abs(x - otherMob->getPosition()->x + 0.5) <= this->GetSize() + otherMob->GetSize()
+			&& std::abs(y - otherMob->getPosition()->y + 0.5) <= this->GetSize() + otherMob->GetSize()) {
 			collisionMobs.push_back(otherMob);
 		}
 	}
@@ -234,8 +234,8 @@ std::shared_ptr<Building> Mob::checkBuildingCollision() {
 	for (std::shared_ptr<Building> b : GameState::buildings) {
 		int x = this->getPosition()->x;
 		int y = this->getPosition()->y;
-		if (std::abs(x - b->getPosition()->x) <= (this->GetSize() + b->GetSize()) / 2
-			&& std::abs(y - b->getPosition()->y) <= (this->GetSize() + b->GetSize()) / 2) {
+		if (std::abs(x - b->getPosition()->x + 0.5) <= (this->GetSize() + b->GetSize()) / 2
+			&& std::abs(y - b->getPosition()->y + 0.5) <= (this->GetSize() + b->GetSize()) / 2) {
 			return b;
 		}
 	}
