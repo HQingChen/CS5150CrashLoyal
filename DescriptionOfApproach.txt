@@ -1,0 +1,26 @@
+For this assignment, the first thing I did was to edit checkCollision() and processCollision() so that 
+the two mobs could successfully collide with each other and will not pass through each other.In order 
+to get all of the mobs that the mob collides with in each frame, I changed the return type of checkCollision() 
+to a vector and used a vector to store the Mob object. For processCollision(), the logic is pretty close to 
+the code in MoveTowards(). Each time two mobs collide with each other, the mob that has smaller mass will get 
+the effect that it will be pushed a little bit, so as the back one if those two mobs have the same mass. If the 
+two mobs have the same mass, they will both be moved back a bit. But there is a problem, if the number of mobs 
+becomes larger, the lower accuracy it has to handle the collisions. The algorithm needs to be improved. Especially 
+in attack mode, even if I add collision check in attackProcedure(), sometimes the accuracy is low due to the large 
+number of mobs on the board. For the attack mode, I found that the mob would always focus on the first-appeared 
+opposite mob until it was dead even if the mob was not cloest. So I edited findAndSetAttackableMob() so that when 
+the mob appears, it will automatically aim to the cloest opponent. But it only works when the mob is initialized on
+the board. It can't dynamically change its target. Also in processCollision(), I added a little bit of motion to the 
+side of the mob so that the faster unit can get around the slower one. It works well for lower number of units. But 
+when the number of smaller units becomes larger, they couldn't perfectly get around a big unit. This is a problem 
+and the relative code needs to be improved. 
+
+Those are for the mobs. I also added funcions checkBuildingCollision() and processBuildingCollision() in Mob.cpp to 
+handle and process the collision between towers. The logic is the same as in the functions for mobs. But I don't think
+it may work well for final version since it doesn't handle the scanning and attacking of the tower. I finally added 
+functions checkRiverCollision() and processRiverCollision() to handle and process the collision between mobs and river.
+It is based on the position between mobs and one of the three rivers. It works well if there are only one side of mobs.
+When there are two camps of mobs and they aim to each other, the mobs can still pass through the river. I tried to make 
+some changes but it still didn't work. From my perspective, in order to perfectly handle and process the collision 
+between mobs and river, a well-performed path planner needs to be added so that the mobs can find and walk to their 
+target logically.
